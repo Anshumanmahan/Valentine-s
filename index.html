@@ -136,6 +136,39 @@ button {
   animation: floatUp 6s linear forwards;
 }
 
+  /* ---------- MOBILE FIX ---------- */
+@media (max-width: 600px) {
+
+  .memory {
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    padding-top: 40px;
+  }
+
+  .photo {
+    position: relative;
+    width: 140px;
+    height: 190px;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    transform: none !important;
+  }
+
+  .heart3d {
+    position: relative;
+    top: auto;
+    left: auto;
+    transform: scale(1);
+    order: -1; /* heart shows first */
+    font-size: 150px;
+    margin-bottom: 10px;
+  }
+}
 @keyframes floatUp {
   from { transform: translateY(100vh); opacity: 1; }
   to { transform: translateY(-10vh); opacity: 0; }
@@ -292,6 +325,7 @@ yesBtn.onclick = () => {
 
 </body>
 </html>
+
 
 
 
