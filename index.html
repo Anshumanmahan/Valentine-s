@@ -2,208 +2,217 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>For You ❤️</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Will you be my Valentine?</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
 <style>
-* {
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
+:root {
+  --pink: #ff3b7a;
 }
 
 body {
   margin: 0;
-  background: radial-gradient(circle at top, #1a1a2e, #000);
-  color: white;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle, #ffeef6, #ffd6e7);
+  font-family: system-ui, sans-serif;
   overflow: hidden;
 }
 
-/* ---------- PAGE BASE ---------- */
-.page {
-  position: absolute;
+canvas {
+  position: fixed;
   inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+  pointer-events: none;
+  z-index: 999;
 }
 
-.page.active {
-  display: flex;
-}
-
-/* ---------- FIRST PAGE ---------- */
-h1 {
-  font-size: 2.2rem;
-  margin-bottom: 20px;
+.card {
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(12px);
+  padding: 28px;
+  border-radius: 26px;
   text-align: center;
+  box-shadow: 0 30px 80px rgba(0,0,0,.2);
+  width: min(720px, 92vw);
+}
+
+h1 {
+  font-size: clamp(26px, 4vw, 42px);
 }
 
 .button-zone {
   position: relative;
-  width: min(520px, 92%);
-  height: 150px;
-  margin: 0 auto;
-  touch-action: none;
+  height: 140px;
+  margin-top: 20px;
 }
 
 button {
   position: absolute;
-  padding: 14px 26px;
-  font-size: 1.1rem;
-  border-radius: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 16px 26px;
+  border-radius: 999px;
   border: none;
+  font-size: 18px;
+  font-weight: 800;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform .15s ease;
 }
 
 #yesBtn {
-  background: linear-gradient(135deg, #ff4d6d, #ff8fa3);
+  left: 20%;
+  background: var(--pink);
   color: white;
-  left: 50%;
-  top: 60%;
-  transform: translate(-50%, -50%);
 }
 
 #noBtn {
-  background: #333;
-  color: white;
-  left: 50%;
-  top: 20%;
-  transform: translate(-50%, -50%);
+  left: 60%;
+  background: #e5e7eb;
 }
 
-/* ---------- HEART PAGE ---------- */
-.heart {
-  width: 120px;
-  height: 120px;
-  background: crimson;
+/* MEMORY */
+.memory {
   position: relative;
-  transform: rotate(-45deg) scale(1);
-  animation: beat 1.2s infinite;
-  box-shadow: 0 0 40px rgba(255,0,80,0.7);
+  height: 420px;
+  display: none;
+  margin-top: 20px;
 }
 
-.heart::before,
-.heart::after {
-  content: "";
-  width: 120px;
-  height: 120px;
-  background: crimson;
-  border-radius: 50%;
+.photo {
   position: absolute;
+  width: 120px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(0,0,0,.25);
+  opacity: 0;
+  filter: blur(10px);
+  transition: all 1.5s ease;
 }
 
-.heart::before {
-  top: -60px;
-  left: 0;
-}
+.p1 { left: 18%; top: 120px; }
+.p2 { right: 18%; top: 120px; }
+.p3 { left: 8%; top: 30px; }
+.p4 { left: 42%; top: 0; }
+.p5 { right: 8%; top: 30px; }
 
-.heart::after {
-  left: 60px;
-  top: 0;
+/* 3D HEART */
+.heart3d {
+  position: absolute;
+  left: 50%;
+  top: 130px;
+  transform: translateX(-50%) scale(0);
+  font-size: 130px;
+  filter: drop-shadow(0 0 40px #ff4d7d);
+  animation: beat 1.2s infinite;
+  opacity: 0;
+  transition: all 1s ease;
 }
 
 @keyframes beat {
-  0%,100% { transform: rotate(-45deg) scale(1); }
-  50% { transform: rotate(-45deg) scale(1.15); }
+  0%,100% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.15); }
 }
 
-.fade-text {
-  margin-top: 40px;
-  font-size: 1.4rem;
-  text-align: center;
-  animation: fadeIn 2s ease forwards;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ---------- MEMORY PAGE ---------- */
-.memory {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-.memory img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* FINAL TEXT */
+.final-text {
+  margin-top: 20px;
+  font-size: 20px;
+  line-height: 1.5;
   opacity: 0;
-  filter: blur(8px);
-  transition: opacity 2s ease, filter 2s ease, transform 2s ease;
+  transition: opacity 2s ease;
 }
 
-.memory img.active {
-  opacity: 1;
-  filter: blur(0);
-  transform: scale(1.05);
+/* LOVE FLOATING */
+.love {
+  position: fixed;
+  font-size: 26px;
+  animation: floatUp 6s linear forwards;
+}
+
+@keyframes floatUp {
+  from { transform: translateY(100vh); opacity: 1; }
+  to { transform: translateY(-10vh); opacity: 0; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- PAGE 1 -->
-<div class="page active" id="page1">
-  <h1>Shraddha Dixit, Will you be mine Valentine? 💍</h1>
+<canvas id="confetti"></canvas>
+
+<main class="card">
+  <h1>Shraddha Dixit, will you be my Valentine? 💖</h1>
+
   <div class="button-zone" id="zone">
-    <button id="yesBtn">Yes ❤️</button>
-    <button id="noBtn">No 🙈</button>
+    <button id="yesBtn">Yes</button>
+    <button id="noBtn">No</button>
   </div>
-</div>
 
-<!-- PAGE 2 -->
-<div class="page" id="page2">
-  <div class="heart"></div>
-  <div class="fade-text">
-    From this moment…<br>
-    I see you as my forever, my wife, my home 💖
-  </div>
-</div>
+  <section class="memory" id="memory">
+    <img src="photo1.jpg" class="photo p1">
+    <img src="photo2.jpg" class="photo p2">
 
-<!-- PAGE 3 -->
-<div class="page" id="page3">
-  <div class="memory">
-    <img src="photo1.jgp" class="active">
-    <img src="photo2.jpg">
-    <img src="photo3.jpg">
-    <img src="photo4.jpg">
-    <img src="photo5.jpg">
+    <div class="heart3d" id="heart">❤️</div>
+
+    <img src="photo3.jpg" class="photo p3">
+    <img src="photo4.jpg" class="photo p4">
+    <img src="photo5.jpg" class="photo p5">
+  </section>
+
+  <div class="final-text" id="finalText">
+    Every love story is beautiful, but ours is the one I want to live forever.<br>
+    Today you’re my Valentine, tomorrow — my wife, my home, my everything. 💍
   </div>
-  <audio id="song" src="pehli-bhi-main.mp3" autoplay loop></audio>
-</div>
+
+  <audio id="music" loop>
+    <source src="pehli-bhi-main.mp3" type="audio/mpeg">
+  </audio>
+</main>
 
 <script>
-const yesBtn = document.getElementById("yesBtn");
-const noBtn = document.getElementById("noBtn");
+/* ---------- CONFETTI ---------- */
+const confettiCanvas = document.getElementById("confetti");
+confettiCanvas.width = window.innerWidth;
+confettiCanvas.height = window.innerHeight;
+const confettiInstance = confetti.create(confettiCanvas, { resize: true });
+
+function launchConfetti() {
+  confettiInstance({ particleCount: 300, spread: 160, origin: {y:.6} });
+}
+
+/* ---------- LOVE FLOAT ---------- */
+function spawnLove() {
+  const el = document.createElement("div");
+  el.className = "love";
+  el.textContent = Math.random() > .5 ? "💖" : "💋";
+  el.style.left = Math.random() * 100 + "vw";
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 6000);
+}
+
+/* ---------- NO BUTTON RUNS AWAY ---------- */
 const zone = document.getElementById("zone");
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
 
 let yesScale = 1;
 
-function clamp(v, min, max) {
-  return Math.max(min, Math.min(max, v));
-}
-
-function growYes() {
-  yesScale += 0.08;
-  yesBtn.style.transform = `translate(-50%, -50%) scale(${yesScale})`;
+function clamp(n, min, max) {
+  return Math.max(min, Math.min(max, n));
 }
 
 function moveNo(px, py) {
   const z = zone.getBoundingClientRect();
   const b = noBtn.getBoundingClientRect();
 
-  let dx = (b.left + b.width / 2) - px;
-  let dy = (b.top + b.height / 2) - py;
+  let dx = (b.left + b.width/2) - px;
+  let dy = (b.top + b.height/2) - py;
   let mag = Math.hypot(dx, dy) || 1;
-  dx /= mag;
-  dy /= mag;
+  dx /= mag; dy /= mag;
 
   let newLeft = (b.left - z.left) + dx * 150;
   let newTop  = (b.top - z.top) + dy * 150;
@@ -213,46 +222,67 @@ function moveNo(px, py) {
 
   noBtn.style.left = newLeft + "px";
   noBtn.style.top = newTop + "px";
-  noBtn.style.transform = "none";
 
-  growYes();
+  yesScale = Math.min(2.2, yesScale + 0.1);
+  yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
 }
 
 zone.addEventListener("pointermove", e => {
   const b = noBtn.getBoundingClientRect();
   const d = Math.hypot(
-    (b.left + b.width / 2) - e.clientX,
-    (b.top + b.height / 2) - e.clientY
+    (b.left + b.width/2) - e.clientX,
+    (b.top + b.height/2) - e.clientY
   );
   if (d < 140) moveNo(e.clientX, e.clientY);
 });
 
-noBtn.addEventListener("pointerdown", e => {
-  moveNo(e.clientX, e.clientY);
-});
+noBtn.onclick = e => e.preventDefault();
 
-yesBtn.addEventListener("click", () => {
-  document.getElementById("page1").classList.remove("active");
-  document.getElementById("page2").classList.add("active");
+/* ---------- YES CLICK MAGIC ---------- */
+const memory = document.getElementById("memory");
+const heart = document.getElementById("heart");
+const text = document.getElementById("finalText");
+const music = document.getElementById("music");
+
+yesBtn.onclick = () => {
+  zone.style.display = "none";
+  memory.style.display = "block";
+  music.play().catch(()=>{});
 
   setTimeout(() => {
-    document.getElementById("page2").classList.remove("active");
-    document.getElementById("page3").classList.add("active");
-    document.getElementById("song").play();
-    startSlideshow();
-  }, 4000);
-});
+    document.querySelector(".p1").style.opacity = 1;
+    document.querySelector(".p2").style.opacity = 1;
+    document.querySelector(".p1").style.filter = "blur(0)";
+    document.querySelector(".p2").style.filter = "blur(0)";
+  }, 500);
 
-/* SLIDESHOW */
-function startSlideshow() {
-  const imgs = document.querySelectorAll(".memory img");
-  let i = 0;
-  setInterval(() => {
-    imgs[i].classList.remove("active");
-    i = (i + 1) % imgs.length;
-    imgs[i].classList.add("active");
-  }, 4000);
-}
+  setTimeout(() => {
+    heart.style.opacity = 1;
+    heart.style.transform = "translateX(-50%) scale(1)";
+  }, 1800);
+
+  setTimeout(() => {
+    document.querySelector(".p1").style.left = "50%";
+    document.querySelector(".p2").style.left = "50%";
+    document.querySelector(".p1").style.transform = "translateX(-50%) scale(.3)";
+    document.querySelector(".p2").style.transform = "translateX(-50%) scale(.3)";
+  }, 3000);
+
+  setTimeout(() => {
+    ["p3","p4","p5"].forEach(c=>{
+      const el = document.querySelector("." + c);
+      el.style.opacity = 1;
+      el.style.filter = "blur(0)";
+    });
+  }, 4200);
+
+  setTimeout(() => {
+    text.style.opacity = 1;
+  }, 5200);
+
+  setInterval(spawnLove, 500);
+  launchConfetti();
+};
 </script>
 
 </body>
