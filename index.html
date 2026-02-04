@@ -59,6 +59,7 @@ button {
   font-size: 18px;
   font-weight: 800;
   cursor: pointer;
+  transition: transform .15s ease;
 }
 
 #yesBtn {
@@ -144,7 +145,7 @@ button {
 <canvas id="confetti"></canvas>
 
 <main class="card">
-  <h1>Shraddha Dixit, will you be my Valentine? 💖</h1>
+  <h1>Nirali, will you be my Valentine? 💖</h1>
 
   <div class="button-zone" id="zone">
     <button id="yesBtn">Yes</button>
@@ -152,7 +153,7 @@ button {
   </div>
 
   <section class="memory" id="memory">
-    <img src="photo1.png" class="photo p1">
+    <img src="photo1.jpg" class="photo p1">
     <img src="photo2.jpg" class="photo p2">
 
     <div class="heart3d" id="heart">❤️</div>
@@ -173,14 +174,7 @@ button {
 </main>
 
 <script>
-const yesBtn = document.getElementById("yesBtn");
-const noBtn = document.getElementById("noBtn");
-const zone = document.getElementById("zone");
-const memory = document.getElementById("memory");
-const heart = document.getElementById("heart");
-const text = document.getElementById("finalText");
-const music = document.getElementById("music");
-
+/* ---------- CONFETTI ---------- */
 const confettiCanvas = document.getElementById("confetti");
 confettiCanvas.width = window.innerWidth;
 confettiCanvas.height = window.innerHeight;
@@ -190,14 +184,65 @@ function launchConfetti() {
   confettiInstance({ particleCount: 300, spread: 160, origin: {y:.6} });
 }
 
+/* ---------- LOVE FLOAT ---------- */
 function spawnLove() {
   const el = document.createElement("div");
   el.className = "love";
   el.textContent = Math.random() > .5 ? "💖" : "💋";
-  el.style.left = Math.random()*100 + "vw";
+  el.style.left = Math.random() * 100 + "vw";
   document.body.appendChild(el);
-  setTimeout(()=>el.remove(),6000);
+  setTimeout(() => el.remove(), 6000);
 }
+
+/* ---------- NO BUTTON RUNS AWAY ---------- */
+const zone = document.getElementById("zone");
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+
+let yesScale = 1;
+
+function clamp(n, min, max) {
+  return Math.max(min, Math.min(max, n));
+}
+
+function moveNo(px, py) {
+  const z = zone.getBoundingClientRect();
+  const b = noBtn.getBoundingClientRect();
+
+  let dx = (b.left + b.width/2) - px;
+  let dy = (b.top + b.height/2) - py;
+  let mag = Math.hypot(dx, dy) || 1;
+  dx /= mag; dy /= mag;
+
+  let newLeft = (b.left - z.left) + dx * 150;
+  let newTop  = (b.top - z.top) + dy * 150;
+
+  newLeft = clamp(newLeft, 0, z.width - b.width);
+  newTop  = clamp(newTop, 0, z.height - b.height);
+
+  noBtn.style.left = newLeft + "px";
+  noBtn.style.top = newTop + "px";
+
+  yesScale = Math.min(2.2, yesScale + 0.1);
+  yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
+}
+
+zone.addEventListener("pointermove", e => {
+  const b = noBtn.getBoundingClientRect();
+  const d = Math.hypot(
+    (b.left + b.width/2) - e.clientX,
+    (b.top + b.height/2) - e.clientY
+  );
+  if (d < 140) moveNo(e.clientX, e.clientY);
+});
+
+noBtn.onclick = e => e.preventDefault();
+
+/* ---------- YES CLICK MAGIC ---------- */
+const memory = document.getElementById("memory");
+const heart = document.getElementById("heart");
+const text = document.getElementById("finalText");
+const music = document.getElementById("music");
 
 yesBtn.onclick = () => {
   zone.style.display = "none";
@@ -225,23 +270,20 @@ yesBtn.onclick = () => {
 
   setTimeout(() => {
     ["p3","p4","p5"].forEach(c=>{
-      const el=document.querySelector("."+c);
-      el.style.opacity=1;
-      el.style.filter="blur(0)";
+      const el = document.querySelector("." + c);
+      el.style.opacity = 1;
+      el.style.filter = "blur(0)";
     });
   }, 4200);
 
-  setTimeout(()=>{
+  setTimeout(() => {
     text.style.opacity = 1;
   }, 5200);
 
   setInterval(spawnLove, 500);
   launchConfetti();
 };
-
-noBtn.onclick = e => e.preventDefault();
 </script>
 
 </body>
 </html>
-
