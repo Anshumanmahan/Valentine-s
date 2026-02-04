@@ -43,11 +43,13 @@ h1 {
   font-size: clamp(26px, 4vw, 42px);
 }
 
-.button-zone {
-  position: relative;
-  height: 140px;
-  margin-top: 20px;
-}
+  .button-zone {
+      position: relative;
+      width: min(520px, 92%);
+      height: 150px;
+      margin: 0 auto;
+      touch-action: none;
+    }
 
 button {
   position: absolute;
@@ -194,49 +196,51 @@ function spawnLove() {
   setTimeout(() => el.remove(), 6000);
 }
 
-/* ---------- NO BUTTON RUNS AWAY ---------- */
-const zone = document.getElementById("zone");
-const noBtn = document.getElementById("noBtn");
-const yesBtn = document.getElementById("yesBtn");
+    /* ---------- YES BUTTON GROWS ---------- */
+    let yesScale = 1;
+    function growYes() {
+      yesScale = Math.min(2.2, yesScale + 0.1);
+      yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
+    }
 
-let yesScale = 1;
+    /* ---------- NO BUTTON RUNS AWAY ---------- */
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
 
-function clamp(n, min, max) {
-  return Math.max(min, Math.min(max, n));
-}
+    function moveNo(px, py) {
+      const z = zone.getBoundingClientRect();
+      const b = noBtn.getBoundingClientRect();
 
-function moveNo(px, py) {
-  const z = zone.getBoundingClientRect();
-  const b = noBtn.getBoundingClientRect();
+      let dx = (b.left + b.width / 2) - px;
+      let dy = (b.top + b.height / 2) - py;
+      let mag = Math.hypot(dx, dy) || 1;
+      dx /= mag;
+      dy /= mag;
 
-  let dx = (b.left + b.width/2) - px;
-  let dy = (b.top + b.height/2) - py;
-  let mag = Math.hypot(dx, dy) || 1;
-  dx /= mag; dy /= mag;
+      let newLeft = (b.left - z.left) + dx * 150;
+      let newTop  = (b.top - z.top) + dy * 150;
 
-  let newLeft = (b.left - z.left) + dx * 150;
-  let newTop  = (b.top - z.top) + dy * 150;
+      newLeft = clamp(newLeft, 0, z.width - b.width);
+      newTop  = clamp(newTop, 0, z.height - b.height);
 
-  newLeft = clamp(newLeft, 0, z.width - b.width);
-  newTop  = clamp(newTop, 0, z.height - b.height);
+      noBtn.style.left = newLeft + "px";
+      noBtn.style.top = newTop + "px";
+      noBtn.style.transform = "none";
 
-  noBtn.style.left = newLeft + "px";
-  noBtn.style.top = newTop + "px";
+      growYes();
+    }
 
-  yesScale = Math.min(2.2, yesScale + 0.1);
-  yesBtn.style.transform = `translateY(-50%) scale(${yesScale})`;
-}
+    zone.addEventListener("pointermove", e => {
+      const b = noBtn.getBoundingClientRect();
+      const d = Math.hypot(
+        (b.left + b.width / 2) - e.clientX,
+        (b.top + b.height / 2) - e.clientY
+      );
+      if (d < 140) moveNo(e.clientX, e.clientY);
+    });
 
-zone.addEventListener("pointermove", e => {
-  const b = noBtn.getBoundingClientRect();
-  const d = Math.hypot(
-    (b.left + b.width/2) - e.clientX,
-    (b.top + b.height/2) - e.clientY
-  );
-  if (d < 140) moveNo(e.clientX, e.clientY);
-});
-
-noBtn.onclick = e => e.preventDefault();
+    noBtn.addEventListener("click", e => e.preventDefault());
 
 /* ---------- YES CLICK MAGIC ---------- */
 const memory = document.getElementById("memory");
@@ -287,3 +291,4 @@ yesBtn.onclick = () => {
 
 </body>
 </html>
+
